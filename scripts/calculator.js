@@ -31,7 +31,7 @@ buttonDot.addEventListener('click', () => {
     if(resultString.indexOf(".") == -1){
         resultString += ".";
     }
-    resultP.textContent = resultString;
+    resultP.textContent = checkLength(resultString);
 });
 
 
@@ -94,7 +94,22 @@ buttonC.addEventListener('click', () => {
 const buttonCE = document.getElementById('calc-ce');
 buttonCE.addEventListener('click', () => {
     calculateResult(0);
+    typedEqual = false;
     resultP.textContent = "0";
+});
+
+
+const buttonPlusMinus = document.getElementById('calc-plus-minus');
+buttonPlusMinus.addEventListener('click', () => {
+    if(!typedEqual){
+        value = 0 - value;
+        calculateResult(value);
+        resultP.textContent = checkLength(value);
+    }else{
+        resultNumber = 0 - resultNumber;
+        calculateResult();
+    }
+
 });
 
 
@@ -116,14 +131,14 @@ function updateResult(num){
         resultString += String(num);
     }
     value = Number(resultString);
-    resultP.textContent = resultString;
+    resultP.textContent = checkLength(resultString);
 }
 
 function calculateResult(optionalNumber){
     resultString = "0";
     updateResult(0);
     value = optionalNumber || 0;  //increments on multiple "=" presses.
-    resultP.textContent = resultNumber;
+    resultP.textContent = checkLength(resultNumber);
 }
 
 //calculate last action on new action;
@@ -153,8 +168,23 @@ function checkEquals(){
     }
 }
 
-function multiply(){
-    resultNumber *= value;
+function checkLength(stringNum){
+    stringNum = String(stringNum);
+    if(stringNum.length > 16){
+        stringNum = stringNum.slice(0, 16);
+        console.log("Cut the string to 16");
+        if(stringNum.indexOf(".") != -1){
+            console.log("Checked for .");
+            for(let i = 0; i < 16; i++){
+                if( stringNum.charAt(stringNum.length-1) == "0" ||
+                    stringNum.charAt(stringNum.length-1) == "." ){
+                        console.log("sliced last");
+                        stringNum = stringNum.slice(0,-1);
+                }
+            }
+        }
+    }
+    return stringNum;
 }
 
 function sum(){
@@ -165,10 +195,14 @@ function subtract(){
     resultNumber -= value;
 }
 
-function divide(){
-    resultNumber = resultNumber/value;
+function multiply(){
+    if(value != 0){
+        resultNumber *= value;
+    }
 }
 
-function percent(a, b){
-    return a*b/100;
+function divide(){
+    if(value != 0){
+        resultNumber = resultNumber/value;
+    }
 }
